@@ -22,6 +22,9 @@ namespace Business.Constants
         public static string RentaCarGetted = "Kiralık araçlar başarıyla getirildi.";
         public static string MaintenanceTime = "Sistem bakımda";
         public static string CarError = "Bir Hata Oluştu.";
-
+        public static string CarImageLimitExceded = "En fazla 5 tane fotoğraf yüklenebilir.";
+        public static string CarImageUpdated = "Araç resmi güncellendi.";
+        public static string CarImageDeleted = "Araç resmi silindi.";
+        public static string CarImageAdded = "Araç resmi eklendi.";
     }
 }
