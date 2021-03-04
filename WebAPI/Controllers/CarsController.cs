@@ -22,7 +22,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("add")]
-        [Authorize()]
+        [Authorize(Roles ="Admin, product.add")]
         public IActionResult Add(Car car)
         {
             var result = _carService.Add(car);

@@ -1,6 +1,8 @@
 using Autofac.Extensions.DependencyInjection;
 using Business.Abstract;
 using Business.Concrete;
+using Core.DependencyResolvers;
+using Core.Extensions;
 using Core.Utilities.IOC;
 using Core.Utilities.Security.Encyption;
 using Core.Utilities.Security.JWT;
@@ -49,8 +51,12 @@ namespace WebAPI
             //services.AddSingleton<IRentACarDal, EfRentACarDal>();
             //services.AddSingleton<IUserService, UserManager>();
             //services.AddSingleton<IUserDal, EfUserDal>();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+            services.AddCors(options =>
+            options.AddDefaultPolicy(
+                builder => builder.AllowAnyOrigin()
+                ));
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -67,7 +73,10 @@ namespace WebAPI
                         IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
                     };
                 });
-            ServiceTool.Create(services);
+            //ServiceTool.Create(services);
+            services.AddDependecyResolvers(new ICoreModule[] {
+                new CoreModule()
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,6 +90,10 @@ namespace WebAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseStaticFiles();
+            
+            app.UseCors();
 
             app.UseAuthentication();
 

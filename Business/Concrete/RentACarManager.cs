@@ -1,6 +1,9 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspect.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
+using Core.Aspects.Autofac.Performance;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities;
 using DataAccess.Abstract;
@@ -19,6 +22,9 @@ namespace Business.Concrete
             _rentACarDal = rentACarDal;
         }
 
+        [PerformanceAspect(5)]
+        [CacheRemoveAspect("IRentalService.Get")]
+        [SecuredOperation("user,admin")]
         public IResult Delete(Rental rentACar)
         {
             if (DateTime.Now.Hour == 23)
@@ -40,6 +46,8 @@ namespace Business.Concrete
         }
 
         [ValidationAspect(typeof(RentACarValidator))]
+        [SecuredOperation("user,admin")]
+        [CacheRemoveAspect("IRentalService.Get")]
         public IResult Insert(Rental rentACar)
         {
             if ((_rentACarDal.Get(p => p.CarId == rentACar.CarId)) == null)//araba kiralanmamşısa
