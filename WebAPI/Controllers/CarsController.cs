@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -21,6 +22,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("add")]
+        [Authorize()]
         public IActionResult Add(Car car)
         {
             var result = _carService.Add(car);
@@ -33,6 +35,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("delete")]
+        [Authorize()]
         public IActionResult Delete(Car car)
         {
             var result = _carService.Delete(car);
@@ -44,6 +47,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("update")]
+        [Authorize()]
         public IActionResult Update(Car car)
         {
             var result = _carService.Update(car);

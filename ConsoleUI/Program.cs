@@ -1,4 +1,5 @@
 ﻿using Business.Concrete;
+using Core.Entities.Concrete;
 using DataAccess.Concrete.EntityFramework;
 using DataAccess.Concrete.InMemory;
 using Entities.Concrete;
@@ -41,37 +42,37 @@ namespace ConsoleUI
             user1.FirstName = "Jack";
             user1.LastName = "Hugeman";
             user1.Email = "jkhgmn@mail.com";
-            user1.Password = "157835";
+            //user1.Password = "157835";
 
             User user2 = new User();
             user2.FirstName = "Natalia";
             user2.LastName = "Ihnatenko";
             user2.Email = "ihnatenko@mail.com";
-            user2.Password = "1145785";
+            //user2.Password = "1145785";
 
             User user3 = new User();
             user3.FirstName = "Mehmet";
             user3.LastName = "Demir";
             user3.Email = "mmtdmr@mail.com";
-            user3.Password = "1478935";
+            //user3.Password = "1478935";
 
             User user4 = new User();
             user4.FirstName = "Furkan";
             user4.LastName = "Kurt";
             user4.Email = "fkrt@mail.com";
-            user4.Password = "14786935";
+            //user4.Password = "14786935";
 
             User user5 = new User();
             user5.FirstName = "Andrew";
             user5.LastName = "Popp";
             user5.Email = "andpopp@mail.com";
-            user5.Password = "471369";
+            //user5.Password = "471369";
 
-            userManager.Add(user1);
-            userManager.Add(user2);
-            userManager.Add(user3);
-            userManager.Add(user4);
-            userManager.Add(user5);
+            //userManager.Add(user1);
+            //userManager.Add(user2);
+            //userManager.Add(user3);
+            //userManager.Add(user4);
+            //userManager.Add(user5);
 
 
             //Console.WriteLine(userManager.Delete(new User { UserId = 7 }).Message);
