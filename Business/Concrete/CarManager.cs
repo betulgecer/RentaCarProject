@@ -27,7 +27,7 @@ namespace Business.Concrete
             _carDal = carDal;
         }
 
-        [SecuredOperation("admin, product.add")]
+        
         [PerformanceAspect(5)]
         [ValidationAspect(typeof(CarValidator))]
         public IResult Add(Car car)
@@ -52,6 +52,7 @@ namespace Business.Concrete
         }
 
         [PerformanceAspect(5)]
+        [SecuredOperation("admin,product.add")]
         public IDataResult<List<Car>> GetAll()
         {
             return new SuccessDataResult<List<Car>>(_carDal.GetAll(),Messages.CarGetted);
