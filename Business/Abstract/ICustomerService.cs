@@ -1,5 +1,6 @@
 ﻿using Core.Utilities;
 using Entities.Concrete;
+using Entities.DTO_s;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,6 +11,7 @@ namespace Business.Abstract
     {
         IDataResult<List<Customer>> GetAll();
         IDataResult<Customer> GetAllByCustomerId(int customerId);
+        IDataResult<List<CustomerDetailDto>> GetCustomerDetails();
         IResult Add(Customer customer);
         IResult Delete(Customer customer);
         IResult Update(Customer customer);

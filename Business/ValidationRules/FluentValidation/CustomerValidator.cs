@@ -11,10 +11,9 @@ namespace Business.ValidationRules.FluentValidation
 
         public CustomerValidator()
         {
-            RuleFor(c => c.Id).NotEmpty();
             RuleFor(c => c.UserId).NotEmpty();
             RuleFor(c => c.CustomerName).NotEmpty();
-            RuleFor(c => c.CustomerName).MinimumLength(2).WithMessage("Müşteri ismi '2' karakterden uzun olmalıdır.");
+            RuleFor(c => c.CustomerName).MinimumLength(3).WithMessage("Müşteri ismi en az 3 karakter olmalıdır");
         }
     }
 }

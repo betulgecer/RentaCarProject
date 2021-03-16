@@ -1,7 +1,9 @@
 ﻿using Core.Utilities;
 using Entities.Concrete;
+using Entities.DTO_s;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace Business.Abstract
@@ -10,6 +12,7 @@ namespace Business.Abstract
     {
         IDataResult<List<Rental>> GetAll();
         IDataResult<Rental> GetById(int rentalId);
+        IDataResult<List<RentalDetailDto>> GetRentalDetails(Expression<Func<Rental, bool>> filter = null);
         IResult Insert(Rental rentACar);
         IResult Delete(Rental rentACar);
         IResult Update(Rental rentACar);
