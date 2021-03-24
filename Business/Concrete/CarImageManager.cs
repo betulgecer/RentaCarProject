@@ -25,7 +25,7 @@ namespace Business.Concrete
 
         public IResult Add(IFormFile file, CarImage carImage)
         {
-            IResult result = BusinessRules.Run(CheckIfImageLimitExceded(carImage.CarId));
+            IResult result = BusinessRules.Run(CheckIfImageLimitExceded(carImage.CarId), CheckIfImageExtensionValid(file));
 
             if (result != null)
             {
@@ -42,15 +42,9 @@ namespace Business.Concrete
 
         public IResult Delete(CarImage carImage)
         {
-            IResult result = BusinessRules.Run(CarImageDelete(carImage));
-
-            if (result != null)
-            {
-                return result;
-            }
-
+            string oldPath = GetById(carImage.Id).Data.ImagePath;
+            FileHelper.Delete(oldPath);
             _carImageDal.Delete(carImage);
-
             return new SuccessResult(Messages.CarImageDeleted);
         }
 
@@ -71,18 +65,26 @@ namespace Business.Concrete
 
         public IResult Update(IFormFile file, CarImage carImage)
         {
-            carImage.ImagePath = FileHelper.Update(_carImageDal.Get(p => p.Id == carImage.Id).ImagePath, file);
+            var result = BusinessRules.Run(
+               CheckIfImageExtensionValid(file));
+
+            if (result != null)
+            {
+                return result;
+            }
+
+            CarImage oldCarImage = GetById(carImage.Id).Data;
+            carImage.ImagePath = FileHelper.Update(file, oldCarImage.ImagePath);
             carImage.Date = DateTime.Now;
-
+            carImage.CarId = oldCarImage.CarId;
             _carImageDal.Update(carImage);
-
             return new SuccessResult(Messages.CarImageUpdated);
         }
 
         public IResult CheckIfImageLimitExceded(int id)
         {
-            var result = _carImageDal.GetAll(c => c.CarId == id);
-            if (result.Count >= 5)
+            var result = _carImageDal.GetAll(c => c.CarId == id).Count;
+            if (result >= 5)
             {
                 return new ErrorResult(Messages.CarImageLimitExceded);
             }
@@ -91,7 +93,7 @@ namespace Business.Concrete
 
         private List<CarImage> CheckIfCarImageNull(int id)
         {
-            string path = @"\wwwroot\Images\Logo.png";
+            string path = @"Images\Logo.png";
             var result = _carImageDal.GetAll(c => c.CarId == id).Any();
             if (!result)
             {
@@ -99,18 +101,15 @@ namespace Business.Concrete
             }
             return _carImageDal.GetAll(p => p.CarId == id);
         }
-        private IResult CarImageDelete(CarImage carImage)
+
+        private IResult CheckIfImageExtensionValid(IFormFile file)
         {
-            try
+            string[] validImageFileTypes = { ".JPG", ".JPEG", ".PNG", ".TIF", ".TIFF", ".GIF", ".BMP", ".ICO", ".WEBP" };
+            var result = validImageFileTypes.Any(t => t == Path.GetExtension(file.FileName).ToUpper());
+            if (!result)
             {
-                File.Delete(carImage.ImagePath);
+                return new ErrorResult("Geçersiz uzantı");
             }
-            catch (Exception exception)
-            {
-
-                return new ErrorResult(exception.Message);
-            }
-
             return new SuccessResult();
         }
     }

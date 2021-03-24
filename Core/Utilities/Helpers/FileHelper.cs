@@ -8,49 +8,48 @@ namespace Core.Utilities.Helpers
 {
     public class FileHelper
     {
+        static string directory = Directory.GetCurrentDirectory() + @"\wwwroot\";
+        static string path = @"Images\";
 
         public static string Add(IFormFile file)
         {
-            var sourcepath = Path.GetTempFileName();
-            if (file.Length>0)
+            string extension = Path.GetExtension(file.FileName);
+            string newFileName = Guid.NewGuid().ToString("N") + extension;
+
+            if (!Directory.Exists(directory + path))
             {
-                using (var stream = new FileStream(sourcepath, FileMode.Create))
-                {
-                    file.CopyTo(stream);
-                }
+                Directory.CreateDirectory(directory + path);
             }
-            var result = NewPath(file);
-            File.Move(sourcepath, result);
-            return result;
 
-        }
-
-        public static void Delete(string path)
-        {
-            File.Delete(path);
-        }
-
-        public static string Update(string sourcePath, IFormFile file)
-        {
-            var result = NewPath(file);
-            if (sourcePath.Length>0)
+            using (FileStream fileStream = File.Create(directory + path + newFileName))
             {
-                using (var stream = new FileStream(result, FileMode.Create))
-                {
-                    file.CopyTo(stream);
-                }
+                file.CopyTo(fileStream);
+                fileStream.Flush();
             }
-            File.Delete(sourcePath);
-            return result;
+
+
+            return (path + newFileName).Replace("\\", "/");
         }
 
-        public static string NewPath(IFormFile file)
+
+
+        public static void Delete(string imagePath)
         {
-            FileInfo fileInfo = new FileInfo(file.FileName);
-            string fileExtension = fileInfo.Extension;
-            var newPath = Guid.NewGuid().ToString() + "_" + DateTime.Now.Month + "_" + DateTime.Now.Day + "_" + DateTime.Now.Year + fileExtension;
-            string result = $@"wwwroot\Images\{newPath}";
-            return result;
+            if (File.Exists(directory + imagePath.Replace("/", "\\")) && Path.GetFileName(imagePath) != "Logo.png")
+            {
+                File.Delete(directory + imagePath.Replace("/", "\\"));
+            }
         }
+
+
+        public static string Update(IFormFile file, string oldImagePath)
+        {
+            Delete(oldImagePath);
+            return Add(file);
+
+
+        }
+
+
     }
 }

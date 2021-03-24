@@ -12,14 +12,16 @@ namespace Business.Abstract
     {
 
         IDataResult<List<Car>> GetAll();
-        IDataResult<Car> GetAllByBrandId(int brandId);
+        IDataResult<List<CarDetailDto>> GetDetailByBrand(int brandId);
+        IDataResult<List<CarDetailDto>> GetDetailsByColorAndByBrand(int colorId, int brandId);
         IResult Add(Car car);
         IResult Update(Car car);
         IResult Delete(Car car);
-        IDataResult<Car> GetCarsByColorId(int colorId);
-        IDataResult<List<Car>> GetByDailyPrice(decimal min, decimal max);
-        IDataResult<List<CarDetailDto>> GetCarDetails(Expression<Func<Car, bool>>filter = null);
+        IDataResult<List<CarDetailDto>> GetDetailByColor(int colorId);
+        IDataResult<List<CarDetailDto>> GetByDailyPrice(decimal min, decimal max);
+        IDataResult<List<CarDetailDto>> GetCarDetails();
         IResult AddTransactionalTest(Car car);
+        IDataResult<List<CarDetailDto>> GetCarDetailsById(int id);
 
     }
 }

@@ -27,16 +27,21 @@ namespace Business.Concrete
             _carDal = carDal;
         }
 
-        
+
         [PerformanceAspect(5)]
         [ValidationAspect(typeof(CarValidator))]
         public IResult Add(Car car)
         {
 
-            //business codes
-
-            _carDal.Add(car);
-            return new SuccessResult(Messages.CarAdded);
+            if (car.DailyPrice < 0)
+            {
+                return new ErrorResult(Messages.CarError);
+            }
+            else
+            {
+                _carDal.Add(car);
+                return new SuccessResult(Messages.CarAdded);
+            }
         }
 
         [SecuredOperation("admin")]
@@ -55,7 +60,7 @@ namespace Business.Concrete
         [SecuredOperation("admin,product.add")]
         public IDataResult<List<Car>> GetAll()
         {
-            return new SuccessDataResult<List<Car>>(_carDal.GetAll(),Messages.CarGetted);
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(), Messages.CarGetted);
         }
 
 
@@ -71,25 +76,25 @@ namespace Business.Concrete
             return new SuccessResult(Messages.CarUpdated);
         }
 
-        IDataResult<Car> ICarService.GetAllByBrandId(int brandId)
+        public IDataResult<List<CarDetailDto>> GetDetailByBrand(int brandId)
         {
-            return new SuccessDataResult<Car>(_carDal.Get(c=>c.BrandId==brandId), Messages.CarGetted);
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails(c => c.BrandId == brandId), Messages.CarGetted);
         }
 
-        IDataResult<Car> ICarService.GetCarsByColorId(int colorId)
+        public IDataResult<List<CarDetailDto>> GetDetailByColor(int colorId)
         {
-            return new SuccessDataResult<Car>(_carDal.Get(b => b.ColorId == colorId),Messages.CarGetted);
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails(b => b.ColorId == colorId), Messages.CarGetted);
         }
 
-        public IDataResult<List<Car>> GetByDailyPrice(decimal min, decimal max)
+        public IDataResult<List<CarDetailDto>> GetByDailyPrice(decimal min, decimal max)
         {
-            return new SuccessDataResult<List<Car>>(_carDal.GetAll(c => c.DailyPrice >= min && c.DailyPrice <= max));
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails(c => c.DailyPrice >= min && c.DailyPrice <= max));
         }
 
-        public IDataResult<List<CarDetailDto>> GetCarDetails(Expression<Func<Car, bool>> filter = null)
+        public IDataResult<List<CarDetailDto>> GetCarDetails()
         {
             //throw new NotImplementedException();
-            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails());
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails(), Messages.CarGetted);
         }
 
         [TransactionScopeAspect]
@@ -102,6 +107,16 @@ namespace Business.Concrete
             }
             Add(car);
             return null;
+        }
+
+        public IDataResult<List<CarDetailDto>> GetCarDetailsById(int id)
+        {
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails(c => c.CarId == id));
+        }
+
+        public IDataResult<List<CarDetailDto>> GetDetailsByColorAndByBrand(int colorId, int brandId)
+        {
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails(c => c.ColorId == colorId && c.BrandId == brandId));
         }
     }
 }
