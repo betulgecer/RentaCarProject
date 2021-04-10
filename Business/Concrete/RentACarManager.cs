@@ -4,8 +4,10 @@ using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Performance;
+using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities;
+using Core.Utilities.Business;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTO_s;
@@ -19,9 +21,11 @@ namespace Business.Concrete
     public class RentACarManager : IRentACarService
     {
         IRentACarDal _rentACarDal;
-        public RentACarManager(IRentACarDal rentACarDal)
+        ICustomerFindeksScoreService _customerFindeksScoreService;
+        public RentACarManager(IRentACarDal rentACarDal, ICustomerFindeksScoreService customerFindeksScoreService)
         {
             _rentACarDal = rentACarDal;
+            _customerFindeksScoreService = customerFindeksScoreService;
         }
 
         [PerformanceAspect(5)]
@@ -47,7 +51,12 @@ namespace Business.Concrete
             return new SuccessDataResult<Rental>(_rentACarDal.Get(r => r.RentalId == rentalId), Messages.RentaCarGetted);
         }
 
-        public IDataResult<List<RentalDetailDto>> GetRentalDetails(Expression<Func<Rental, bool>> filter = null)
+        public IDataResult<List<RentalDetailDto>> GetRentalDetailById(int id)
+        {
+            return new SuccessDataResult<List<RentalDetailDto>>(_rentACarDal.GetRentalDetails(r=>r.RentalId == id));
+        }
+
+        public IDataResult<List<RentalDetailDto>> GetRentalDetails()
         {
             return new SuccessDataResult<List<RentalDetailDto>>(_rentACarDal.GetRentalDetails());
         }
@@ -55,28 +64,19 @@ namespace Business.Concrete
         [ValidationAspect(typeof(RentACarValidator))]
         [SecuredOperation("user,admin")]
         [CacheRemoveAspect("IRentalService.Get")]
+        [TransactionScopeAspect]
         public IResult Insert(Rental rentACar)
         {
-            if ((_rentACarDal.Get(p => p.CarId == rentACar.CarId)) == null)//araba kiralanmamşısa
+            IResult result = BusinessRules.Run(CheckRentDate(rentACar));
+            if (result != null)
+            {
+                return new ErrorResult("Araç girdiğiniz tarihlerde uygun değil");
+            }
+            else
             {
                 _rentACarDal.Add(rentACar);
-                return new SuccessResult(Messages.RentaCarAdded);
-            }
-            else //araba daha önce kiralamışsa
-            {
-                foreach (var rentalList in _rentACarDal.GetAll())
-                {
-                    if (rentalList.CarId == rentACar.CarId)//arabanın kiralama listesini alıyoruz
-                    {
-                        if (rentalList.ReturnDate != null)//araba daha önce kiralanmış ama geri verilmiş olan
-                        {
-                            _rentACarDal.Add(rentACar);
-                            return new SuccessResult(Messages.RentaCarAdded);
-                        }
-                    }
-                }
-                //kiralanmış ama geri verilmemiş                
-                return new ErrorResult(Messages.CarError);
+                _customerFindeksScoreService.FindeksScoreAddOrUpdate(rentACar.CustomerId);
+                return new SuccessResult("Araç Kiralandı");
             }
         }
 
@@ -89,6 +89,17 @@ namespace Business.Concrete
             }
             _rentACarDal.Update(rentACar);
             return new SuccessResult(Messages.RentaCarUpdated);
+        }
+
+        private IResult CheckRentDate(Rental rental)
+        {
+            var result = _rentACarDal.GetAll(r => r.CarId == rental.CarId &&
+            (r.RentDate <= rental.RentDate && rental.RentDate <= r.ReturnDate)
+            || (rental.RentDate <= r.RentDate && r.RentDate <= rental.ReturnDate));
+            if (result.Count == 0)
+            { return new SuccessResult(); }
+            else
+            { return new ErrorResult(); }
         }
     }
 }

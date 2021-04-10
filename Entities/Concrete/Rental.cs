@@ -9,6 +9,7 @@ namespace Entities.Concrete
     {
         public int RentalId { get; set; }
         public int CarId { get; set; }
+        public int BrandId { get; set; }
 
         public int CustomerId { get; set; }
 

@@ -36,6 +36,10 @@ namespace DataAccess.Concrete.EntityFramework
         
         public DbSet<UserOperationClaim> UserOperationClaims { get; set; }
 
+        public DbSet<CreditCard> CreditCards { get; set; }
+
+        public DbSet<CustomerFindeksScore> FindexScores { get; set; }
+
 
     }
 }

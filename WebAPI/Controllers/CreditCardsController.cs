@@ -1,8 +1,5 @@
 ﻿using Business.Abstract;
-using Core.Entities.Concrete;
 using Entities.Concrete;
-using Entities.DTO_s;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,31 +10,29 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class CreditCardsController : ControllerBase
     {
-
-        IUserService _userService;
-
-        public UsersController(IUserService userService)
+        ICreditCardService _creditCardService;
+        public CreditCardsController(ICreditCardService creditCardService)
         {
-            _userService = userService;
+            _creditCardService = creditCardService;
         }
 
         [HttpPost("add")]
-        public IActionResult Add(User user)
+        public IActionResult Add(CreditCard creditCard)
         {
-            var result = _userService.Add(user);
+            var result = _creditCardService.Add(creditCard);
             if (result.Success)
             {
                 return Ok(result);
             }
-           return BadRequest(result);
+            return BadRequest(result);
         }
 
         [HttpPost("delete")]
-        public IActionResult Delete(User user)
+        public IActionResult Delete(CreditCard creditCard)
         {
-            var result = _userService.Delete(user);
+            var result = _creditCardService.Delete(creditCard);
             if (result.Success)
             {
                 return Ok(result);
@@ -46,9 +41,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("update")]
-        public IActionResult Update(User user)
+        public IActionResult Update(CreditCard creditCard)
         {
-            var result = _userService.Update(user);
+            var result = _creditCardService.Update(creditCard);
             if (result.Success)
             {
                 return Ok(result);
@@ -59,19 +54,18 @@ namespace WebAPI.Controllers
         [HttpGet("getall")]
         public IActionResult GetAll()
         {
-            var result = _userService.GetAll();
+            var result = _creditCardService.GetAll();
             if (result.Success)
             {
                 return Ok(result);
             }
             return BadRequest(result);
-
         }
 
-        [HttpGet("getbyid")]
-        public IActionResult GetById(int id)
+        [HttpGet("getbycustomer")]
+        public IActionResult GetByCustomerId(int id)
         {
-            var result = _userService.GetById(id);
+            var result = _creditCardService.GetByCustomer(id);
             if (result.Success)
             {
                 return Ok(result);
@@ -79,15 +73,6 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getbymail")]
-        public IActionResult GetByMail(string email)
-        {
-            var result = _userService.GetByMail(email);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
+
     }
 }

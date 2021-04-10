@@ -24,6 +24,7 @@ namespace Business.Concrete
         [ValidationAspect(typeof(CustomerValidator))]
         public IResult Add(Customer customer)
         {
+
             if (DateTime.Now.Hour == 23)
             {
                 return new ErrorResult(Messages.MaintenanceTime);
@@ -47,9 +48,14 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Customer>>(_customerDal.GetAll(),Messages.CustomerGetted);
         }
 
-        public IDataResult<Customer> GetAllByCustomerId(int customerId)
+        public IDataResult<Customer> GetByUserId(int id)
         {
-            return new SuccessDataResult<Customer>(_customerDal.Get(b => b.Id == customerId),Messages.CustomerGetted);
+            return new SuccessDataResult<Customer>(_customerDal.Get(b => b.Id == id), Messages.CustomerGetted);
+        }
+
+        public IDataResult<List<CustomerDetailDto>> GetCustomerDetailById(int id)
+        {
+            return new SuccessDataResult<List<CustomerDetailDto>>(_customerDal.GetCustomerDetails(c => c.Id == id));
         }
 
         public IDataResult<List<CustomerDetailDto>> GetCustomerDetails()

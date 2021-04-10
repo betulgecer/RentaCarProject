@@ -15,10 +15,12 @@ namespace WebAPI.Controllers
     {
 
         IRentACarService _rentACarService;
+        IPaymentService _paymentService;
 
-        public RentACarsController(IRentACarService rentACarService)
+        public RentACarsController(IRentACarService rentACarService, IPaymentService paymentService)
         {
             _rentACarService = rentACarService;
+            _paymentService = paymentService;
         }
 
         [HttpPost("add")]
@@ -87,6 +89,32 @@ namespace WebAPI.Controllers
             }
             return BadRequest(result);
         }
+
+        [HttpPost("payment")]
+        public IActionResult PaymentTest(PaymentTest amount)
+        {
+            var result = _paymentService.MakePayment(amount);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result.Message);
+
+        }
+
+        [HttpGet("getrentaldetailsbyid")]
+        public IActionResult GetRentalDetailsById(int id)
+        {
+
+            var result = _rentACarService.GetRentalDetailById(id);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
 
     }
 }

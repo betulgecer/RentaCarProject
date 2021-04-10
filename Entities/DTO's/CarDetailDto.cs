@@ -17,5 +17,6 @@ namespace Entities.DTO_s
         public List<string> ImagePath { get; set; }
         public int BrandId { get; set; }
         public int ColorId { get; set; }
+        public int? MinFindexScore { get; set; }
     }
 }

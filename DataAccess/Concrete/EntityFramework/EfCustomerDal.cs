@@ -19,11 +19,15 @@ namespace DataAccess.Concrete.EntityFramework
                 var result = from c in context.Customers
                              join u in context.Users
                              on c.UserId equals u.UserId
+                             join f in context.FindexScores
+                             on c.Id equals f.CustomerId
                              select new CustomerDetailDto
                              {
                                  UserId = u.UserId,
                                  CustomerName = c.CustomerName,
-                                 Email = u.Email
+                                 Email = u.Email,
+                                 FindexScore = f.FindexScore
+
                              };
                 return result.ToList();
             }

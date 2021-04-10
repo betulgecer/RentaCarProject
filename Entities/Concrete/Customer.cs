@@ -11,7 +11,7 @@ namespace Entities.Concrete
         [Key]
         public int Id { get; set; }
         public int UserId { get; set; }
-        public String CustomerName { get; set; }
+        public string CustomerName { get; set; }
 
     }
 }

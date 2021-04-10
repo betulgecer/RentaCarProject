@@ -24,15 +24,15 @@ namespace ConsoleUI
 
         }
 
-        private static void RentalTest()
-        {
-            RentACarManager rentalManager = new RentACarManager(new EfRentACarDal());
-            rentalManager.Insert(new Rental { RentDate = new DateTime(2021, 02, 20), CarId = 2, CustomerId = 2 });
-            foreach (var rental in rentalManager.GetAll().Data)
-            {
-                Console.WriteLine(rental.RentDate);
-            }
-        }
+        //private static void RentalTest()
+        //{
+        //    RentACarManager rentalManager = new RentACarManager(new EfRentACarDal());
+        //    rentalManager.Insert(new Rental { RentDate = new DateTime(2021, 02, 20), CarId = 2, CustomerId = 2 });
+        //    foreach (var rental in rentalManager.GetAll().Data)
+        //    {
+        //        Console.WriteLine(rental.RentDate);
+        //    }
+        //}
 
         private static void UserTest()
         {

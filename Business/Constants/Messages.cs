@@ -35,5 +35,9 @@ namespace Business.Constants
         public static string RegisterSuccess = "Kullanıcı kaydı başarıyla tamamlanmıştır.";
         public static string TokenCreated = "Token oluşturulmuştur.";
         public static string AuthorizationDenied = "yetkiniz yok";
+        public static string CardExist = "Bu kart zaten kayıtlı";
+        public static string UserUpdated = "Kullanıcı güncellendi";
+        public static string CustomerFindeksScoreAdded = "Findeks puanı eklendi";
+        public static string CustomerFindeksScoreUpdated = "Findeks puanı güncellendi";
     }
 }
